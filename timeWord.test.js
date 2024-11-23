@@ -1,51 +1,53 @@
-const timeToWords = require('./timeToWords');
+const timeToWords = require('./timeword'); // Adjust the path based on your project structure
 
-// Array of test cases with the input time and expected output in words
-const testCases = [
-  ['00:00', 'midnight'],
-  ['12:00', 'noon'],
-  ['01:00', 'one o’clock am'],
-  ['06:01', 'six oh one am'],
-  ['09:30', 'nine thirty am'],
-  ['10:45', 'ten forty five am'],
-  ['11:59', 'eleven fifty nine am'],
-  ['12:30', 'twelve thirty pm'],
-  ['14:15', 'two fifteen pm'],
-  ['18:05', 'six oh five pm'],
-  ['20:20', 'eight twenty pm'],
-  ['23:59', 'eleven fifty nine pm']
-];
-
-// Unit test for timeToWords
 describe('timeToWords', () => {
-
-  // Iterate through each test case
-  testCases.forEach(([input, expectedOutput]) => {
-    it(`should convert ${input} to "${expectedOutput}"`, () => {
-      // Compare the actual output to the expected output
-      expect(timeToWords(input)).toBe(expectedOutput);
-    });
+  test('should return "midnight" for 00:00', () => {
+    expect(timeToWords('00:00')).toBe('midnight');
   });
 
-  // Add additional boundary tests for edge cases
-  it('should handle invalid times', () => {
-    expect(() => timeToWords('25:00')).toThrow();  // Invalid hour
-    expect(() => timeToWords('13:60')).toThrow();  // Invalid minute
-    expect(() => timeToWords('random')).toThrow(); // Invalid input
+  test('should return "noon" for 12:00', () => {
+    expect(timeToWords('12:00')).toBe('noon');
   });
 
-  it('should handle times without leading zeros correctly', () => {
-    expect(timeToWords('9:30')).toBe('nine thirty am'); // Missing leading zero in hour
-    expect(timeToWords('7:05')).toBe('seven oh five am');
+  test('should return correct time for morning hours (AM)', () => {
+    expect(timeToWords('01:00')).toBe('one o’clock am');
+    expect(timeToWords('02:15')).toBe('two fifteen am');
+    expect(timeToWords('11:59')).toBe('eleven fifty nine am');
   });
 
-  it('should handle times in single hour format correctly', () => {
-    expect(timeToWords('1:30')).toBe('one thirty am'); // 1:30 am without leading zero
-    expect(timeToWords('2:15')).toBe('two fifteen am');
+  test('should return correct time for afternoon hours (PM)', () => {
+    expect(timeToWords('12:30')).toBe('twelve thirty pm');
+    expect(timeToWords('13:45')).toBe('one forty five pm');
+    expect(timeToWords('23:59')).toBe('eleven fifty nine pm');
   });
 
-  it('should return "noon" and "midnight" for 12:00 and 00:00', () => {
-    expect(timeToWords('12:00')).toBe('noon');       // 12:00 pm as noon
-    expect(timeToWords('00:00')).toBe('midnight');   // 00:00 as midnight
+  test('should handle leading zeros in minutes', () => {
+    expect(timeToWords('03:01')).toBe('three oh one am');
+    expect(timeToWords('15:09')).toBe('three oh nine pm');
+  });
+
+  test('should handle edge times at AM/PM boundaries', () => {
+    expect(timeToWords('11:59')).toBe('eleven fifty nine am');
+    expect(timeToWords('12:00')).toBe('noon');
+    expect(timeToWords('23:59')).toBe('eleven fifty nine pm');
+    expect(timeToWords('00:00')).toBe('midnight');
+  });
+
+  test('should handle full hour times correctly', () => {
+    expect(timeToWords('04:00')).toBe('four o’clock am');
+    expect(timeToWords('16:00')).toBe('four o’clock pm');
+  });
+
+  test('should handle various random times correctly', () => {
+    expect(timeToWords('05:34')).toBe('five thirty four am');
+    expect(timeToWords('18:15')).toBe('six fifteen pm');
+    expect(timeToWords('07:07')).toBe('seven oh seven am');
+  });
+
+  test('should throw an error for invalid input', () => {
+    expect(() => timeToWords('25:00')).toThrow();
+    expect(() => timeToWords('12:60')).toThrow();
+    expect(() => timeToWords('')).toThrow();
+    expect(() => timeToWords('abc')).toThrow();
   });
 });

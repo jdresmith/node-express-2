@@ -18,4 +18,23 @@ User data can be updated by only the user themselves or an admin.
 
 Users can be deleted by admins only.
 
+BUG 1
+In `auth.js` in the middleware folder the original code had the authUser function utalizing jwt.decode() rather than jwt.verify(). this means it would extract the payload without verifying the tokens signature.
+
+Fixed by replacing with jwt.verify() and use SECRET_KEY for validation.
+
+BUG 2
+In `createToken.js` did not have catch block which would help with explainining failure of token creation. Without this the application could crash without proper explanation.
+
+BUG 3
+In `auth.js`, user.admin is passed to createTokenForUser. If the User.register or User.authenticate methods do not populate admin, this could result in a runtime error or unexpected behavior.
+
+This was changed to `const token = createTokenForUser(username, user.admin || false);` to default to false if it is undefined.
+
+This is tested on line 96 of routes.test.js.
+
+BUG 4 
+In `users.js` the `DELETE /:username` route is missing the await keyword, which means the route won't properly handle the promise returned by `User.delete`. By adding `await` we ensure the deltion is complete.
+
+
 

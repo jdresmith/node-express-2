@@ -24,7 +24,19 @@ function timeToWords(time) {
         '57': 'fifty seven', '58': 'fifty eight', '59': 'fifty nine'
     };
 
+    // Validate input format
+    if (!/^\d{2}:\d{2}$/.test(time)) {
+        throw new Error('Invalid time format. Expected HH:MM.');
+    }
+
+
     const [hour, minute] = time.split(':');
+
+     // Validate hour and minute ranges
+     if (!(hour in hoursMap) || !(minute in minutesMap)) {
+        throw new Error('Invalid time value. Hour must be between 00 and 23, and minute between 00 and 59.');
+    }
+
     const hourWord = hoursMap[hour];
     const minuteWord = minutesMap[minute];
 
@@ -34,3 +46,5 @@ function timeToWords(time) {
     const period = parseInt(hour) < 12 ? 'am' : 'pm';
     return `${hourWord} ${minuteWord} ${period}`;
 }
+
+module.exports = timeToWords;

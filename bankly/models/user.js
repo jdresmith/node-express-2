@@ -16,6 +16,7 @@ class User {
       [username]
     );
 console.log(duplicateCheck.rows.length)
+
     if (duplicateCheck.rows.length > 0) {
       throw new ExpressError(
         `There already exists a user with username '${username}'`,
